@@ -7,8 +7,6 @@
     For some reason Ollama does't format their JSON in a way that javascript can parse
     So I have to edit it before parsing
 
-    Also I still need to add the AI chats to the message list
-
 
 
 
@@ -38,9 +36,26 @@ function addAiChat(chat)
     };
 }
 
+function GetLastAiMessage()
+{
+  var chatContent = document.getElementById("contents");
+    var list = document.getElementsByClassName("aiReply"); 
+    if(list.length > 0)
+    {
+      var last = list[list.length - 1];
+      var msg = last.innerText;
+      console.log("ai: " + msg);
+      addAiChat(msg);
+    }
+
+    chatContent.scrollTop = chatContent.offsetHeight;
+}
+
 
 function ChatWith()
 {
+  var chatContent = document.getElementById("contents");
+  GetLastAiMessage();
   var prmptElement = document.getElementById('text');
   var prompt = prmptElement.value;
 
@@ -49,7 +64,6 @@ function ChatWith()
   var user =  document.createElement("div");
   user.innerHTML = prompt;
   user.classList.add( "userChat", "userTextColor" );
-
 
   addUserChat(prompt);
  
@@ -132,7 +146,12 @@ function ChatWith()
     } else {
       console.log(datares.statusText);
     }
-}
+
+    //scroll it
+    chatContent.scrollTop = chatContent.offsetHeight;
+  }
+
+  chatContent.scrollTop = chatContent.offsetHeight;
 }
 
 function parseChat(obj)
