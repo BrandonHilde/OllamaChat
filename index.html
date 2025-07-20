@@ -9,13 +9,63 @@
       <div id="contents" style="height: 65vh; overflow: scroll;">
       </div>
      
-      <div class="user" style="height: 30vh;">
-        <textarea class="center userTextColor" style="min-height: 100px;" id="text"></textarea>
+      <div class="user">
+        <div style="display: none;" id="hasImages">
+          <div class="button userTextColor" onclick="toggleImageMenu()" style="margin-bottom: 5px;">Images</div>
+          <div id="imageMenu" style="display: none; max-height: 150px; overflow-y: auto; margin-bottom: 5px; border: 1px solid #a5a5bc; border-radius: 5px; background-color: #46468d;">
+              <div id="imagePreview" style="display: flex; flex-wrap: wrap; gap: 10px; padding: 5px;"></div>
+          </div>
+        </div>
+        <textarea class="userTextColor" style="min-height: 100px; width: 100%; box-sizing: border-box;" id="text"></textarea>
         <div class="button userTextColor" onclick="ChatWith();">Send</div>
       </div>
     </div>
 	<script>
+            document.addEventListener('drop', function(ev) {
+              ev.preventDefault();
+              ev.stopPropagation();
 
+              const dt = ev.dataTransfer;
+              const files = dt.files;
+
+              if (files.length > 0) 
+              {
+                  const file = files[0];
+                  
+                  // Make sure the file is an image
+                  if (file.type.startsWith('image/')) 
+                  {
+                      const reader = new FileReader();
+                      
+                      reader.onload = function(e) {
+
+                        var dat =  e.target.result.toString();
+                        var inx = dat.lastIndexOf(',');
+                        dat = dat.substring(inx + 1);
+                        imgs[imgs.length] = dat;
+                        updateImagePreview();
+
+                        //console.log(dat);
+                      }
+                      
+                      reader.readAsDataURL(file);
+                  } 
+                  else 
+                  {
+                      console.log('Please drop an image file');
+                  }
+              }
+            });
+
+            document.addEventListener('dragenter', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            });
+
+            document.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            });
 	</script>
 	</body>
 </html>

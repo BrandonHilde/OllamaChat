@@ -67,6 +67,6 @@ textarea
 .user
 {
     position: fixed;
-    bottom: 10px;
-    width: 100%;
+    bottom: 7vh;
+    width: 80%;
 }

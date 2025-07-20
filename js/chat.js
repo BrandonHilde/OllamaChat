@@ -18,13 +18,18 @@ var aiWriteTo = null;
 // array of conversation messages
 var messagesText = [];
 
+var imgs = [];
+
 function addUserChat(chat)
 {
     messagesText[messagesText.length] = 
     { 
         role: 'user', 
-        content: chat 
+        content: chat,
+        images: imgs
     };
+
+    console.log(messagesText);
 }
 
 function addAiChat(chat)
@@ -36,26 +41,62 @@ function addAiChat(chat)
     };
 }
 
-function GetLastAiMessage()
-{
-  var chatContent = document.getElementById("contents");
-    var list = document.getElementsByClassName("aiReply"); 
-    if(list.length > 0)
-    {
-      var last = list[list.length - 1];
-      var msg = last.innerText;
-      console.log("ai: " + msg);
-      addAiChat(msg);
-    }
+function updateImagePreview() {
+  const imagePreview = document.getElementById('imagePreview');
+  imagePreview.innerHTML = '';
 
-    chatContent.scrollTop = chatContent.offsetHeight;
+  const imgdiv = document.getElementById('hasImages');
+  if(imgs.length > 0)
+  {
+    imgdiv.style.display = "block";
+  }
+  else
+  {
+    imgdiv.style.display = "none";
+  }
+
+  imgs.forEach((imgData, index) => {
+    const imgContainer = document.createElement('div');
+    imgContainer.style.position = 'relative';
+    imgContainer.style.marginRight = '10px';
+
+    const img = document.createElement('img');
+    img.src = `data:image/jpeg;base64,${imgData}`;
+    img.style.width = '100px';
+    img.style.height = '100px';
+
+    const removeButton = document.createElement('div');
+    removeButton.textContent = 'X';
+    removeButton.style.position = 'absolute';
+    removeButton.style.top = '0';
+    removeButton.style.right = '0';
+    removeButton.style.background = 'red';
+    removeButton.style.color = 'white';
+    removeButton.style.cursor = 'pointer';
+    removeButton.style.padding = '2px 5px';
+    removeButton.onclick = () => {
+      imgs.splice(index, 1);
+      updateImagePreview();
+    };
+
+    imgContainer.appendChild(img);
+    imgContainer.appendChild(removeButton);
+    imagePreview.appendChild(imgContainer);
+  });
 }
 
+function toggleImageMenu() {
+  const menu = document.getElementById('imageMenu');
+  if (menu.style.display === 'none') {
+    menu.style.display = 'block';
+  } else {
+    menu.style.display = 'none';
+  }
+}
 
 function ChatWith()
 {
   var chatContent = document.getElementById("contents");
-  GetLastAiMessage();
   var prmptElement = document.getElementById('text');
   var prompt = prmptElement.value;
 
@@ -81,7 +122,7 @@ function ChatWith()
   const datares = new XMLHttpRequest();
 
  const json = JSON.stringify({
-    model: 'gemma2',
+    model: 'gemma3:4b',
     messages: messagesText,
     stream: true
  });
